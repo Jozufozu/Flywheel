@@ -41,7 +41,7 @@ public class LevelRendererMixin {
 		FlywheelEvents.BEGIN_FRAME.invoker().handleEvent(new BeginFrameEvent(level, camera, frustum));
 	}
 
-	@Inject(at = @At("TAIL"), method = "renderChunkLayer")
+	@Inject(at = @At("TAIL"), method = "renderSectionLayer")
 	private void renderLayer(RenderType type, PoseStack stack, double camX, double camY, double camZ, Matrix4f projection, CallbackInfo ci) {
 		FlywheelEvents.RENDER_LAYER.invoker().handleEvent(new RenderLayerEvent(level, type, stack, renderBuffers, camX, camY, camZ));
 	}

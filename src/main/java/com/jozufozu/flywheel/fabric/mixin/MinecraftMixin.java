@@ -24,7 +24,7 @@ public abstract class MinecraftMixin {
 		}
 	}
 
-	@Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At(value = "JUMP", opcode = Opcodes.IFNULL, ordinal = 2))
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At(value = "JUMP", opcode = Opcodes.IFNULL, ordinal = 2))
 	private void onClearLevel(CallbackInfo ci) {
 		ForgeEvents.unloadWorld(level);
 	}
