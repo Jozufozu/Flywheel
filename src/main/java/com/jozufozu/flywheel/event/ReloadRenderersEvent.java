@@ -3,7 +3,7 @@ package com.jozufozu.flywheel.event;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public class ReloadRenderersEvent extends Event {
 	private final ClientLevel world;

@@ -1,6 +1,6 @@
 package com.jozufozu.flywheel.util;
 
-import net.minecraftforge.client.model.lighting.QuadLighter;
+import net.neoforged.neoforge.client.model.lighting.QuadLighter;
 
 public class RenderMath {
 

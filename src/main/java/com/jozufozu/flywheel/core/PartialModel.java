@@ -6,7 +6,7 @@ import java.util.Map;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 
 /**
  * A helper class for loading and accessing json models.

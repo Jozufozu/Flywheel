@@ -1,12 +1,12 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "${loader_version_range}"
 issueTrackerURL = "https://github.com/Jozufozu/Flywheel/issues"
 license = "MIT"
 
 [[mods]]
 modId = "flywheel"
 # The Implementation-Version property in the jar's MANIFEST.MF file will be used as the mod version at runtime
-version = "${file.jarVersion}"
+version = "${mod_version}"
 displayName = "Flywheel"
 logoFile = "logo.png"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/flywheel"
@@ -16,22 +16,22 @@ description = '''
 A modern engine for modded minecraft.'''
 
 [[dependencies.flywheel]]
-modId = "forge"
-mandatory = true
-versionRange = "[47.0.0,)"
+modId = "neoforge"
+type = "required"
+versionRange = "${neoforge_version_range}"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.flywheel]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20.1,1.21)"
+type = "required"
+versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.flywheel]]
 modId = "rubidium"
-mandatory = false
+type = "optional"
 versionRange = "[0.7.0,)"
 ordering = "NONE"
 side = "CLIENT"

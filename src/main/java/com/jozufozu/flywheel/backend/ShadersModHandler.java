@@ -6,10 +6,9 @@ import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nullable;
 
-import net.irisshaders.iris.api.v0.IrisApi;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public final class ShadersModHandler {
 	public static final String OPTIFINE_ROOT_PACKAGE = "net.optifine";
@@ -76,14 +75,14 @@ public final class ShadersModHandler {
 	private static class Oculus implements InternalHandler {
 		@Override
 		public boolean isShaderPackInUse() {
-			return IrisApi.getInstance()
-					.isShaderPackInUse();
+			return false /*IrisApi.getInstance()
+					.isShaderPackInUse()*/;
 		}
 
 		@Override
 		public boolean isRenderingShadowPass() {
-			return IrisApi.getInstance()
-					.isRenderingShadowPass();
+			return false /*IrisApi.getInstance()
+					.isRenderingShadowPass()*/;
 		}
 	}
 

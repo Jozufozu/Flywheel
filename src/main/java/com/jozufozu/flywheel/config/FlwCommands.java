@@ -2,6 +2,10 @@ package com.jozufozu.flywheel.config;
 
 import java.util.function.BiConsumer;
 
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.jozufozu.flywheel.backend.Backend;
@@ -16,8 +20,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 public class FlwCommands {
 	public static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -88,7 +90,7 @@ public class FlwCommands {
 		commandBuilder.build(event.getDispatcher());
 	}
 
-	public static void booleanValueCommand(LiteralArgumentBuilder<CommandSourceStack> builder, ConfigValue<Boolean> value, BiConsumer<CommandSourceStack, Boolean> displayAction, BiConsumer<CommandSourceStack, Boolean> setAction) {
+	public static void booleanValueCommand(LiteralArgumentBuilder<CommandSourceStack> builder, ModConfigSpec.ConfigValue<Boolean> value, BiConsumer<CommandSourceStack, Boolean> displayAction, BiConsumer<CommandSourceStack, Boolean> setAction) {
 		builder
 			.executes(context -> {
 				displayAction.accept(context.getSource(), value.get());
@@ -127,7 +129,7 @@ public class FlwCommands {
 			command = Commands.literal(baseLiteral);
 		}
 
-		public <T extends ConfigValue<?>> void addValue(T value, String subcommand, BiConsumer<LiteralArgumentBuilder<CommandSourceStack>, T> consumer) {
+		public <T extends ModConfigSpec.ConfigValue<?>> void addValue(T value, String subcommand, BiConsumer<LiteralArgumentBuilder<CommandSourceStack>, T> consumer) {
 			LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(subcommand);
 			consumer.accept(builder, value);
 			command.then(builder);

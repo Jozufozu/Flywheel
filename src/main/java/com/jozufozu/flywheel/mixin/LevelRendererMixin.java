@@ -1,5 +1,7 @@
 package com.jozufozu.flywheel.mixin;
 
+import net.neoforged.neoforge.common.NeoForge;
+
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,9 +25,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 @Mixin(value = LevelRenderer.class, priority = 1001) // Higher priority to go after sodium
@@ -39,19 +40,19 @@ public class LevelRendererMixin {
 
 	@Inject(at = @At("HEAD"), method = "setupRender")
 	private void setupRender(Camera camera, Frustum frustum, boolean queue, boolean isSpectator, CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new BeginFrameEvent(level, camera, frustum));
+		NeoForge.EVENT_BUS.post(new BeginFrameEvent(level, camera, frustum));
 	}
 
-	@Inject(at = @At("TAIL"), method = "renderChunkLayer")
+	@Inject(at = @At("TAIL"), method = "renderSectionLayer")
 	private void renderLayer(RenderType type, PoseStack stack, double camX, double camY, double camZ, Matrix4f projection, CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new RenderLayerEvent(level, type, stack, renderBuffers, camX, camY, camZ));
+		NeoForge.EVENT_BUS.post(new RenderLayerEvent(level, type, stack, renderBuffers, camX, camY, camZ));
 	}
 
 	@Inject(at = @At("TAIL"), method = "allChanged")
 	private void refresh(CallbackInfo ci) {
 		Backend.refresh();
 
-		MinecraftForge.EVENT_BUS.post(new ReloadRenderersEvent(level));
+		NeoForge.EVENT_BUS.post(new ReloadRenderersEvent(level));
 	}
 
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 2 // after the game renders the breaking overlay normally

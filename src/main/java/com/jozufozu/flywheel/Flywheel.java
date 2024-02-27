@@ -1,5 +1,11 @@
 package com.jozufozu.flywheel;
 
+import net.neoforged.bus.api.IEventBus;
+
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.slf4j.Logger;
 
@@ -21,17 +27,10 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.CrashReportCallables;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkConstants;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.fml.CrashReportCallables;
+import net.neoforged.fml.IExtensionPoint;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
 
 @Mod(Flywheel.ID)
 public class Flywheel {
@@ -40,7 +39,7 @@ public class Flywheel {
 	public static final Logger LOGGER = LogUtils.getLogger();
 	private static ArtifactVersion version;
 
-	public Flywheel() {
+	public Flywheel(IEventBus modEventBus) {
 		ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
 		version = modLoadingContext
@@ -48,19 +47,19 @@ public class Flywheel {
 				.getModInfo()
 				.getVersion();
 
-		IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
-		IEventBus modEventBus = FMLJavaModLoadingContext.get()
-				.getModEventBus();
+		IEventBus forgeEventBus = NeoForge.EVENT_BUS;
 		modEventBus.addListener(Flywheel::registerArgumentTypes);
 
 		FlwConfig.init();
 
 		modLoadingContext.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(
-				() -> NetworkConstants.IGNORESERVERONLY,
-				(serverVersion, isNetwork) -> isNetwork
+				() -> "FLYWHEEL",
+				(serverVersion, isNetwork) -> true
 		));
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Flywheel.clientInit(forgeEventBus, modEventBus));
+		if (FMLEnvironment.dist.isClient()) {
+			Flywheel.clientInit(forgeEventBus, modEventBus);
+		}
 	}
 
 	private static void clientInit(IEventBus forgeEventBus, IEventBus modEventBus) {

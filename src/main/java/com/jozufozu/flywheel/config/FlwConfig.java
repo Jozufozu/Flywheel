@@ -1,12 +1,11 @@
 package com.jozufozu.flywheel.config;
 
+import net.neoforged.neoforge.common.ModConfigSpec;
+
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
 
 public class FlwConfig {
 
@@ -15,7 +14,7 @@ public class FlwConfig {
 	public final ClientConfig client;
 
 	public FlwConfig() {
-		Pair<ClientConfig, ForgeConfigSpec> client = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+		Pair<ClientConfig, ModConfigSpec> client = new ModConfigSpec.Builder().configure(ClientConfig::new);
 
 		this.client = client.getLeft();
 
@@ -43,11 +42,11 @@ public class FlwConfig {
 	}
 
 	public static class ClientConfig {
-		public final EnumValue<BackendType> backend;
-		public final BooleanValue debugNormals;
-		public final BooleanValue limitUpdates;
+		public final ModConfigSpec.EnumValue<BackendType> backend;
+		public final ModConfigSpec.BooleanValue debugNormals;
+		public final ModConfigSpec.BooleanValue limitUpdates;
 
-		public ClientConfig(ForgeConfigSpec.Builder builder) {
+		public ClientConfig(ModConfigSpec.Builder builder) {
 			backend = builder.comment("Select the backend to use.")
 					.defineEnum("backend", BackendType.INSTANCING);
 

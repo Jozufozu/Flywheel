@@ -1,25 +1,10 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-        maven { url = 'https://maven.parchmentmc.org' }
-    }
-    dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:${forgegradle_version}"
-        classpath "org.spongepowered:mixingradle:${mixingradle_version}"
-        classpath "org.parchmentmc:librarian:${librarian_version}"
-    }
-}
-
 plugins {
     id 'com.matthewprenger.cursegradle' version "${cursegradle_version}"
+    id 'net.neoforged.gradle.userdev' version '7.0.+'
+    id 'net.neoforged.gradle.mixin' version '7.0.+'
+    id 'maven-publish'
+    id 'eclipse'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
 
 boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equalsIgnoreCase('false');
 
@@ -33,65 +18,41 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + ' (' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-minecraft {
-    if (Boolean.parseBoolean(project.use_parchment)) {
-        mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
-    } else {
-        mappings channel: 'official', version: "${minecraft_version}"
+subsystems {
+    parchment {
+        enabled = Boolean.parseBoolean(project.use_parchment)
+        minecraftVersion = project.minecraft_version
+        mappingsVersion = project.parchment_version
+    }
+}
+
+runs {
+    configureEach {
+        workingDirectory project.file('run')
+
+        systemProperty 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+        modSource project.sourceSets.main
     }
 
-    runs {
-        client {
-            workingDirectory project.file('run')
+    client {
+        systemProperty 'forge.logging.markers', ''
+        systemProperty 'mixin.debug.export', 'true'
+        systemProperty 'mixin.env.remapRefMap', 'true'
+        systemProperty 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        systemProperty 'flw.loadRenderDoc', 'true'
+    }
 
-            property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.debug.export', 'true'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            property 'flw.loadRenderDoc', 'true'
+    server {
+        programArgument 'nogui'
+    }
 
-            arg '-mixin.config=flywheel.mixins.json'
-            arg '-mixin.config=flywheel.sodium.mixins.json'
+    data {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-            mods {
-                flywheel {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            arg '-mixin.config=flywheel.mixins.json'
-            arg '-mixin.config=flywheel.sodium.mixins.json'
-
-            mods {
-                flywheel {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'flywheel', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                flywheel {
-                    source sourceSets.main
-                }
-            }
-        }
+        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+        programArguments.addAll '--mod', 'flywheel', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
     }
 }
 
@@ -116,30 +77,21 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation "net.neoforged:neoforge:${neoforge_version}"
 
     // switch to implementation for debugging
-    compileOnly fg.deobf('maven.modrinth:starlight-forge:1.1.2+1.20')
+    implementation 'maven.modrinth:starlight-neoforge:1.1.3+1.20.4'
 
-    compileOnly fg.deobf('maven.modrinth:rubidium:0.7.0a')
-    compileOnly fg.deobf('maven.modrinth:oculus:1.20-1.6.4')
-
-    // https://discord.com/channels/313125603924639766/725850371834118214/910619168821354497
-    // Prevent Mixin annotation processor from getting into IntelliJ's annotation processor settings
-    // This allows 'Settings > Build, Execution, and Deployment > Build Tools > Gradle > Build and run using' set to IntelliJ to work correctly
-    if (!Boolean.getBoolean('idea.sync.active')) {
-        annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-    }
+    // Rubidium and Oculus don't support 1.20.4 yet
+    //compileOnly fg.deobf('maven.modrinth:rubidium:0.7.0a')
+    //compileOnly fg.deobf('maven.modrinth:oculus:1.20-1.6.4')
 }
 
 mixin {
-    add sourceSets.main, 'flywheel.refmap.json'
+    config 'flywheel.mixins.json'
+    //config 'flywheel.sodium.mixins.json'
 }
 
-// Workaround for SpongePowered/MixinGradle#38
-afterEvaluate {
-    tasks.configureReobfTaskForReobfJar.mustRunAfter(tasks.compileJava)
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
@@ -177,8 +129,26 @@ void addLicense(jarTask) {
     }
 }
 
-jar.finalizedBy('reobfJar')
 addLicense(jar)
+
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
+// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version       : minecraft_version,
+            minecraft_version_range : minecraft_version_range,
+            neoforge_version_range  : neoforge_version_range,
+            loader_version_range    : loader_version_range,
+            mod_version             : mod_version,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties + [project: project]
+    }
+}
 
 publishing {
     publications {
@@ -186,7 +156,6 @@ publishing {
             artifactId = archivesBaseName
 
             from components.java
-            fg.component(it)
         }
     }
 
@@ -209,6 +178,6 @@ curseforge {
         changelog = file('changelog.txt')
         releaseType = project.curse_type
         mainArtifact jar
-        addGameVersion '1.20.1'
+        addGameVersion '1.20.4'
     }
 }

@@ -21,6 +21,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -367,6 +368,11 @@ public class VirtualRenderWorld extends Level implements FlywheelWorld {
 	@Nullable
 	public Entity getEntity(int id) {
 		return null;
+	}
+
+	@Override
+	public TickRateManager tickRateManager() {
+		return this.level.tickRateManager();
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package com.jozufozu.flywheel.event;
 
 import javax.annotation.Nullable;
 
+import net.neoforged.bus.api.Event;
+
 import org.joml.Matrix4f;
 
 import com.jozufozu.flywheel.backend.RenderLayer;
@@ -11,7 +13,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraftforge.eventbus.api.Event;
 
 public class RenderLayerEvent extends Event {
 	private final ClientLevel world;

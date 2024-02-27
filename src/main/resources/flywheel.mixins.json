@@ -21,7 +21,7 @@
     "RenderTypeMixin",
     "fix.FixFabulousDepthMixin",
     "fix.FixNormalScalingMixin",
-    "instancemanage.ChunkRebuildHooksMixin",
+    "instancemanage.SectionRebuildHooksMixin",
     "instancemanage.InstanceAddMixin",
     "instancemanage.InstanceRemoveMixin",
     "instancemanage.InstanceUpdateMixin",

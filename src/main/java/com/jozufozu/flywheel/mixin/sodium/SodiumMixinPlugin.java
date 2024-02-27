@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import com.google.common.base.Suppliers;
 
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.LoadingModList;
 
 public class SodiumMixinPlugin implements IMixinConfigPlugin {
 	private static final Supplier<Boolean> IS_SODIUM_LOADED = Suppliers.memoize(() -> LoadingModList.get().getModFileById("rubidium") != null);

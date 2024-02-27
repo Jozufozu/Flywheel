@@ -3,7 +3,7 @@ package com.jozufozu.flywheel.util;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 /**
  * For compatibility with and without another mod present, we have to define load conditions of the specific code
